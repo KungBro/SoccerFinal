@@ -1,0 +1,6 @@
+# Visual Studio 临时文件和缓存
+.vs/
+
+# 编译输出目录
+bin/
+obj/
