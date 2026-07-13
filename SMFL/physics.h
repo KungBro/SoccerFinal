@@ -16,11 +16,6 @@ public:
     static void checkGoalCrossbarCollision(Ball* ball);
     static bool isInKickZone(const Player& player, const Ball& ball);
     static void resolvePlayerStandingOnBall(Player& player, Ball& ball);
-    //static sf::Vector2f getKickDirectionP1() { return KickDirectionP1; }
-    //static sf::Vector2f getKickDirectionP2() { return KickDirectionP2; }
-private:
-    //static sf::Vector2f KickDirectionP1;
-    //static sf::Vector2f KickDirectionP2;
 };
 
 inline float dot(const sf::Vector2f& a, const sf::Vector2f& b)
