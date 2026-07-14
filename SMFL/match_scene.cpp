@@ -152,6 +152,7 @@ void MatchScene::restartMatch()
     matchFinished = false;
     paused = false;
     buffs.clear();
+    kickFlashes.clear();
     buffSpawnTimer = 0.0f;
     resetPositions();
 }
@@ -347,6 +348,17 @@ void MatchScene::update(float)
         }
     }
 
+    // ---- Kick flash effects ----
+    {
+        const float dt = 1.0f / 60.0f;
+        for (auto& kf : kickFlashes)
+            kf.update(dt);
+        kickFlashes.erase(
+            std::remove_if(kickFlashes.begin(), kickFlashes.end(),
+                [](const KickFlash& k) { return !k.active; }),
+            kickFlashes.end());
+    }
+
     remainingMs -= 16;
     if (remainingMs <= 0) {
         remainingMs = 0;
@@ -403,8 +415,14 @@ void MatchScene::collision()
 {
     Physics::checkPlayerCollision(&player1, &player2);
     for (auto* p : { &player1, &player2 }) {
+        bool wasKicking = p->iskick;
         if (!Physics::checkCollideBody(p, &ball))
             Physics::checkCollideHead(p, &ball);
+        if (wasKicking && !p->iskick) {
+            sf::Vector2f kickCenter = p->pos
+                + sf::Vector2f(0.0f, (float)Constants::PlayerHeight);
+            kickFlashes.emplace_back(kickCenter);
+        }
     }
     Physics::checkGoalCrossbarCollision(&ball);
 }
@@ -476,6 +494,10 @@ void MatchScene::draw(sf::RenderWindow& window)
         if (buff.active)
             buff.draw(window);
     }
+
+    // 绘制踢球闪光特效
+    for (auto& kf : kickFlashes)
+        kf.draw(window);
 
     if (Physics::isInKickZone(player1, ball))
     {

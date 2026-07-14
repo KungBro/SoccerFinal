@@ -14,6 +14,7 @@
 #include "player.h"
 #include "ai_player.h"
 #include "buff.h"
+#include "kick_flash.h"
 
 class PauseOverlay;
 
@@ -86,6 +87,9 @@ private:
 
     // Buff 系统
     std::vector<Buff> buffs;
+
+    // 踢球闪光特效
+    std::vector<KickFlash> kickFlashes;
     float buffSpawnTimer = 0.0f;
     void spawnBuff();
     void updateBuffs(float dt);

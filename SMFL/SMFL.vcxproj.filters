@@ -54,6 +54,9 @@
     <ClCompile Include="buff.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="kick_flash.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scene.h">
@@ -99,6 +102,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="buff.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="kick_flash.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
