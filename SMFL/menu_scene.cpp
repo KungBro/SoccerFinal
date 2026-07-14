@@ -43,6 +43,11 @@ void Button::handleMouseClick(const sf::Vector2i& mp)
         pressed = true;
         AudioManager::GetInstance()->play("click");
         //sound_.play();
+        if (AudioManager::GetInstance()->isMusicPaused)
+        {
+            AudioManager::GetInstance()->playMusic();
+            AudioManager::GetInstance()->isMusicPaused = false;
+        }
         shape.setFillColor(colorPress);
         if (onClick) onClick();
         pressed = false;

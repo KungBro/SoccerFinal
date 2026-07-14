@@ -56,6 +56,7 @@ private:
     sf::RectangleShape arrow_1;
     sf::RectangleShape arrow_2;
     sf::Vector2f arPos;
+    
 
     int player1Type = 0, player2Type = 0;
     int score1 = 0, score2 = 0;

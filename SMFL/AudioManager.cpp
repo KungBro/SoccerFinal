@@ -2,6 +2,12 @@
 
 void AudioManager::loadSound(const std::string& id, const std::string& filepath) {
     sf::SoundBuffer buffer;
+
+    music_.openFromFile("assets/Audio/theme.mp3");
+    music_.play();
+    music_.setVolume(15);
+    music_.setLooping(true);
+
     if (!buffer.loadFromFile(filepath)) {
         std::cerr << "加载音频失败: " << filepath << std::endl;
         return;
@@ -10,6 +16,16 @@ void AudioManager::loadSound(const std::string& id, const std::string& filepath)
     buffers_[id] = std::move(buffer);
     // 直接使用带 buffer 的构造函数，无需默认构造
     sounds_[id] = std::make_unique<sf::Sound>(buffers_[id]);
+}
+
+void AudioManager::pauseMusic()
+{
+    music_.pause();
+}
+
+void AudioManager::playMusic()
+{
+    music_.play();
 }
 
 AudioManager* AudioManager::GetInstance() {

@@ -44,10 +44,15 @@ private:
     std::unordered_map<std::string, std::unique_ptr<sf::Sound>> sounds_;
 
     void loadSound(const std::string& id, const std::string& filepath);
+    sf::Music music_;
+    
 
 public:
     static AudioManager* GetInstance();
     void init();
     void play(const std::string& id);
     void setVolume(float volume);
+    void pauseMusic();
+    void playMusic();
+    bool isMusicPaused = false;
 };

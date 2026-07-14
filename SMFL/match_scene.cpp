@@ -20,6 +20,8 @@ MatchScene::MatchScene(const sf::Font& font)
 {
     Buff::preload();  // 游戏启动时预加载所有 Buff 纹理
 
+    
+
     bool bgOk = bgTexture.loadFromFile("assets/images/background.png");
     if (bgOk) {
         bgRect.setTexture(&bgTexture);
@@ -160,6 +162,16 @@ void MatchScene::handleEvent(const sf::Event& event)
     if (const auto* key = event.getIf<sf::Event::KeyPressed>()) {
         if (key->code == sf::Keyboard::Key::Escape) {
             togglePause();
+            if (AudioManager::GetInstance()->isMusicPaused)
+            {
+                AudioManager::GetInstance()->playMusic();
+                AudioManager::GetInstance()->isMusicPaused = false;
+            }
+            else 
+            {
+                AudioManager::GetInstance()->pauseMusic();
+                AudioManager::GetInstance()->isMusicPaused = true;
+            }
             return;
         }
     }

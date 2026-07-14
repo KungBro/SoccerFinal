@@ -7,7 +7,7 @@ PauseOverlay::PauseOverlay(const sf::Font& font,
                            std::function<void()> onResume,
                            std::function<void()> onQuit)
     : pausedText(font)
-    , resumeButton(font, "Resume", { 220, 56 }, { 800, 420 }, std::move(onResume))
+    , resumeButton(font, "Continue", { 220, 56 }, { 800, 420 }, std::move(onResume))
     , quitToMenuButton(font, "Quit to Menu", { 220, 56 }, { 800, 510 }, std::move(onQuit))
 {
     overlay.setSize({ Constants::WindowWidth, Constants::WindowHeight });
