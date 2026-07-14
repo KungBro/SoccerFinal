@@ -356,11 +356,11 @@ bool Physics::checkCollideBody(Player* player, Ball* ball)
     }
     checkBallBoundary(ball);
 
-    static sf::Clock hitCooldownClock;  // 静态时钟，只会初始化一次
-    if (hitCooldownClock.getElapsedTime().asSeconds() >= 0.2f) {
-        AudioManager::GetInstance()->play("hit");
-        hitCooldownClock.restart();  // 重置计时器
-    }
+    //static sf::Clock hitCooldownClock;  // 静态时钟，只会初始化一次
+    //if (hitCooldownClock.getElapsedTime().asSeconds() >= 0.2f) {
+    //    AudioManager::GetInstance()->play("hit");
+    //    hitCooldownClock.restart();  // 重置计时器
+    //}
 
     return true;
 }
