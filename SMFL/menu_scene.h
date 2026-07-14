@@ -46,5 +46,6 @@ private:
     Button twoPlayerButton;
     Button exitButton;
     sf::Text titleText;
+    sf::Texture tex_;
 
 };

@@ -13,7 +13,7 @@ SelectScene::SelectScene(const sf::Font& font)
 
 void SelectScene::loadAssets()
 {
-    (void)bgTexture.loadFromFile("assets/images/background.png");
+    (void)bgTexture.loadFromFile("assets/images/select_scene.png");
     const char* heads[] = { "player_1","player_2","player_3",
                            "player_4","player_6","player_5" };
     const char* bodys[] = { "CHE","ATM","ARS","MCI","PSG","FCB" };
@@ -70,7 +70,7 @@ void SelectScene::draw(sf::RenderWindow& window)
     window.draw(bgSprite);
 
     sf::Text titleText(font);
-    titleText.setString("SoccerGame");
+    titleText.setString("Bouncing World Cup");
     titleText.setCharacterSize(42);
     titleText.setFillColor(sf::Color::White);
     auto tb = titleText.getLocalBounds();

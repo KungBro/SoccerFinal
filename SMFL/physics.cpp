@@ -278,8 +278,9 @@ bool Physics::checkCollideBody(Player* player, Ball* ball)
                 player->playerface * std::cos(angleRad), -std::sin(angleRad));
             const float t = 1.0f - std::clamp(std::hypot(fx, vy), 0.0f, 1.0f);
             float kickStrength =
-                Constants::KickMinStrength
-                + (Constants::KickMaxStrength - Constants::KickMinStrength) * t;
+                (Constants::KickMinStrength
+                 + (Constants::KickMaxStrength - Constants::KickMinStrength) * t)
+                * player->getAttributes().kickMult * player->effectKickMult;
             ball->velocity += kickStrength * kickDirection;
             ball->velocity.x += player->velocity.x * 0.35f;
             ball->lastKicker = player;

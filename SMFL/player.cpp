@@ -5,6 +5,18 @@
 #include <algorithm>
 #include <cmath>
 
+// Per-player-type base attribute table (indexed by player type 0-5)
+static const PlayerAttributes kPlayerAttributes[6] = {
+    // CHE         ATM         ARS         MCI         PSG         FCB
+    {1.0f,1.0f,1.2f}, {1.2f,1.0f,1.4f}, {1.0f,1.2f,1.4f},
+    {1.4f,1.0f,1.4f}, {1.5f,0.9f,1.0f}, {0.9f,1.2f,1.5f},
+};
+
+const PlayerAttributes& getPlayerAttributes(int type)
+{
+    return kPlayerAttributes[type];
+}
+
 Player::Player()
     : acceleration(Constants::Gravity)
 {
@@ -138,7 +150,7 @@ void Player::jump()
 {
     if (!onGround) return;
     onGround = false;
-    velocity.y = -Constants::JumpSpeed * effectJumpMult;
+    velocity.y = -Constants::JumpSpeed * attribs.jumpMult * effectJumpMult;
 }
 
 void Player::update()
@@ -147,10 +159,11 @@ void Player::update()
 
     const int effectiveInput = effectFrozen ? 0 : moveInput;
 
-    const float ax = onGround ? Constants::PlayerGroundAccel : Constants::PlayerAirAccel;
+    const float ax = (onGround ? Constants::PlayerGroundAccel : Constants::PlayerAirAccel)
+                   * attribs.speedMult;
     velocity.x += effectiveInput * ax;
     const float vmax = (onGround ? Constants::PlayerMaxSpeedGround : Constants::PlayerMaxSpeedAir)
-                       * effectSpeedMult;
+                       * attribs.speedMult * effectSpeedMult;
     velocity.x = std::clamp(velocity.x, -vmax, vmax);
     if (effectiveInput == 0) {
         velocity.x *= (onGround ? Constants::PlayerGroundDrag : Constants::PlayerAirDrag);

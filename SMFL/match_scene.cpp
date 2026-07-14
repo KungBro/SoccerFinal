@@ -108,6 +108,8 @@ void MatchScene::togglePause()
 void MatchScene::setPlayers(int p1, int p2)
 {
     player1Type = p1; player2Type = p2;
+    player1.setAttributes(getPlayerAttributes(p1));
+    player2.setAttributes(getPlayerAttributes(p2));
 
     const char* heads[] = { "player_1","player_2","player_3",
                            "player_4","player_6","player_5" };

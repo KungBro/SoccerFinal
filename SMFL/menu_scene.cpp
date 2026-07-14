@@ -68,7 +68,7 @@ MenuScene::MenuScene(const sf::Font& font)
         [this]() { if (onQuit) onQuit(); })
     , titleText(font)
 {
-    titleText.setString("SoccerGame");
+    titleText.setString("Bouncing World Cup");
     titleText.setCharacterSize(48);
     titleText.setFillColor(sf::Color::White);
     auto tb = titleText.getLocalBounds();
@@ -100,7 +100,8 @@ void MenuScene::handleEvent(const sf::Event& event)
 void MenuScene::draw(sf::RenderWindow& window)
 {
     sf::RectangleShape bg({ Constants::WindowWidth, Constants::WindowHeight });
-    bg.setFillColor({ 135, 206, 235 });
+    tex_.loadFromFile("assets/images/background.png");
+    bg.setTexture(&tex_);
     window.draw(bg);
     window.draw(titleText);
     singlePlayerButton.draw(window);
