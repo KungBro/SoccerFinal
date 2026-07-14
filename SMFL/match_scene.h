@@ -6,6 +6,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Audio.hpp>
 #include <functional>
 #include <vector>
 #include "ball.h"
@@ -58,7 +59,6 @@ private:
     int score1 = 0, score2 = 0;
     float remainingMs = 90000.0f;
     bool matchFinished = false;
-    //bool p1KickPressed = false, p2KickPressed = false;
 
     // Single player / pause
     bool singlePlayer = false;

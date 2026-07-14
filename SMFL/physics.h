@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Audio.hpp>
 
 class Ball;
 class Player;
@@ -8,6 +9,7 @@ class Player;
 class Physics
 {
 public:
+    Physics();
     static void checkBallBoundary(Ball* ball);
     static void checkPlayerBoundary(Player* player);
     static void checkPlayerCollision(Player* player1, Player* player2);

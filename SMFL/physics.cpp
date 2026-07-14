@@ -2,6 +2,7 @@
 #include "ball.h"
 #include "player.h"
 #include "constants.h"
+#include "AudioManager.h"
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -182,6 +183,13 @@ bool Physics::checkCollideHead(Player* player, Ball* ball)
         player->velocity -= (j / mPlayer) * normal;
     }
     checkBallBoundary(ball);
+
+    static sf::Clock hitCooldownClock;  // 静态时钟，只会初始化一次
+    if (hitCooldownClock.getElapsedTime().asSeconds() >= 0.2f) {
+        AudioManager::GetInstance()->play("hit");
+        hitCooldownClock.restart();  // 重置计时器
+    }
+
     return true;
 }
 
@@ -274,6 +282,11 @@ bool Physics::checkCollideBody(Player* player, Ball* ball)
             ball->velocity.x += player->velocity.x * 0.35f;
             
             player->iskick = false;
+            static sf::Clock hitCooldownClock;  // 静态时钟，只会初始化一次
+            if (hitCooldownClock.getElapsedTime().asSeconds() >= 0.2f) {
+                AudioManager::GetInstance()->play("kick");
+                hitCooldownClock.restart();  // 重置计时器
+            }
             return true;
         }
     }
@@ -342,5 +355,12 @@ bool Physics::checkCollideBody(Player* player, Ball* ball)
         ball->velocity -= 0.10f * vt * tangent;
     }
     checkBallBoundary(ball);
+
+    static sf::Clock hitCooldownClock;  // 静态时钟，只会初始化一次
+    if (hitCooldownClock.getElapsedTime().asSeconds() >= 0.2f) {
+        AudioManager::GetInstance()->play("hit");
+        hitCooldownClock.restart();  // 重置计时器
+    }
+
     return true;
 }

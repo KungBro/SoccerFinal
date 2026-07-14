@@ -6,6 +6,7 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Audio.hpp>
 #include <vector>
 #include <functional>
 #include "player.h"

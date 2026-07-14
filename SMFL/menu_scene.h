@@ -5,6 +5,7 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Audio.hpp>
 #include <functional>
 #include <string>
 
@@ -45,4 +46,5 @@ private:
     Button twoPlayerButton;
     Button exitButton;
     sf::Text titleText;
+
 };

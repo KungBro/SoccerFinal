@@ -48,6 +48,9 @@
     <ClCompile Include="pause_overlay.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scene.h">
@@ -87,6 +90,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="pause_overlay.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

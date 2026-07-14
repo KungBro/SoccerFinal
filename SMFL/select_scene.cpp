@@ -1,10 +1,15 @@
 #include "select_scene.h"
 #include "constants.h"
+#include "AudioManager.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
-SelectScene::SelectScene(const sf::Font& font) : font(font) { loadAssets(); }
+SelectScene::SelectScene(const sf::Font& font)
+    : font(font)
+{ 
+    loadAssets(); 
+}
 
 void SelectScene::loadAssets()
 {
@@ -26,16 +31,25 @@ void SelectScene::handleEvent(const sf::Event& event)
     if (const auto* key = event.getIf<sf::Event::KeyPressed>()) {
         switch (key->code) {
         case sf::Keyboard::Key::A:
-            player1Index = (player1Index + 5) % 6; break;
+            player1Index = (player1Index + 5) % 6; 
+            AudioManager::GetInstance()->play("select");
+            break;
         case sf::Keyboard::Key::D:
-            player1Index = (player1Index + 1) % 6; break;
+            player1Index = (player1Index + 1) % 6; 
+            AudioManager::GetInstance()->play("select");
+            break;
         case sf::Keyboard::Key::Left:
-            player2Index = (player2Index + 5) % 6; break;
+            player2Index = (player2Index + 5) % 6; 
+            AudioManager::GetInstance()->play("select");
+            break;
         case sf::Keyboard::Key::Right:
-            player2Index = (player2Index + 1) % 6; break;
+            player2Index = (player2Index + 1) % 6;
+            AudioManager::GetInstance()->play("select");
+            break;
         case sf::Keyboard::Key::S:
         case sf::Keyboard::Key::Down:
             if (onPlayersSelected)
+                AudioManager::GetInstance()->play("click");
                 onPlayersSelected(player1Index, player2Index);
             break;
         case sf::Keyboard::Key::Escape:

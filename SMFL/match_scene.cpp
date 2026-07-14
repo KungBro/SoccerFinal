@@ -2,6 +2,7 @@
 #include "constants.h"
 #include "physics.h"
 #include "pause_overlay.h"
+#include "AudioManager.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -13,6 +14,8 @@ MatchScene::MatchScene(const sf::Font& font)
     , bgRect({ Constants::WindowWidth, Constants::WindowHeight })
     , arrow_1({ Constants::ArrowWidth, Constants::ArrowHeight })
     , arrow_2({ Constants::ArrowWidth, Constants::ArrowHeight })
+    //, buffer_("assets/Audio/kick.wav")
+    //, kick_(buffer_)
 {
     bool bgOk = bgTexture.loadFromFile("assets/images/background.png");
     if (bgOk) {
@@ -151,24 +154,12 @@ void MatchScene::handleEvent(const sf::Event& event)
         case sf::Keyboard::Key::S : 
             if (!p1KickPressed) { p1KickPressed = true; }
             break;
-        //case sf::Keyboard::Key::A : player1.move(-1); break;
-        //case sf::Keyboard::Key::D : player1.move(1); break;
-        //case sf::Keyboard::Key::W : player1.jump(); break;
-        //case sf::Keyboard::Key::S :
-        //    if (!p1KickPressed) { player1.iskick = true; p1KickPressed = true; }
-        //    break;
         default: break;
         }
 
         // Player 2 输入 (仅双人模式中)
         if (!singlePlayer) {
             switch (key->code) {
-            //case sf::Keyboard::Key::Left:  player2.move(-1); break;
-            //case sf::Keyboard::Key::Right: player2.move(1); break;
-            //case sf::Keyboard::Key::Up:    player2.jump(); break;
-            //case sf::Keyboard::Key::Down:
-            //    if (!p2KickPressed) { player2.iskick = true; p2KickPressed = true; }
-            //    break;
             case sf::Keyboard::Key::Left:  p2LeftPressed = true; break;
             case sf::Keyboard::Key::Right: p2RightPressed = true; break;
             case sf::Keyboard::Key::Up:    p2JumpPressed = true; break;
@@ -278,7 +269,6 @@ void MatchScene::setArrow(const Player& player, sf::RectangleShape& arrow)
     arPos = ball.getPos();
     float directionRad = 0.f;
     sf::Vector2f KickDirection;
-    float KickStrength;
 
     // 获取形状的本地边界（SFML 3.x 语法）
     sf::FloatRect bounds = arrow.getLocalBounds();

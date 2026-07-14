@@ -4,6 +4,7 @@
 #include "select_scene.h"
 #include "match_scene.h"
 #include "end_scene.h"
+#include "AudioManager.h"
 #include <SFML/Window/Event.hpp>
 #include <iostream>
 
@@ -44,6 +45,7 @@ Game::~Game() {
 
 void Game::run()
 {
+    AudioManager::GetInstance()->init();
     while (window.isOpen()) {
         processEvents();
         float dt = clock.restart().asSeconds();

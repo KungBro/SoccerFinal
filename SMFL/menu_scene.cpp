@@ -1,5 +1,6 @@
 #include "menu_scene.h"
 #include "constants.h"
+#include "AudioManager.h"
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
 
@@ -7,7 +8,9 @@
 Button::Button(const sf::Font& font, const std::string& label,
     const sf::Vector2f& size, const sf::Vector2f& position,
     std::function<void()> callback)
-    : shape(size), text(font), onClick(std::move(callback))
+    : shape(size)
+    , text(font)
+    , onClick(std::move(callback))
 {
     shape.setOrigin({ size.x * 0.5f, size.y * 0.5f });
     shape.setPosition(position);
@@ -38,6 +41,8 @@ void Button::handleMouseClick(const sf::Vector2i& mp)
 {
     if (shape.getGlobalBounds().contains({ (float)mp.x, (float)mp.y })) {
         pressed = true;
+        AudioManager::GetInstance()->play("click");
+        //sound_.play();
         shape.setFillColor(colorPress);
         if (onClick) onClick();
         pressed = false;
