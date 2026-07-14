@@ -23,6 +23,7 @@ public:
     Type type;
     bool active = true;
 
+    static void preload();                 // 游戏启动时预加载纹理
     static float radius();
     static const char* typeName(Type t);
 

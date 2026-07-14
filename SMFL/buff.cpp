@@ -3,50 +3,49 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+// File-scope static textures: shared by all Buff instances, loaded once in preload()
+static sf::Texture s_speedUpTex;
+static sf::Texture s_slowDownTex;
+static sf::Texture s_jumpBoostTex;
+static sf::Texture s_freezeTex;
+static sf::Texture s_bigKickTex;
+
+void Buff::preload()
+{
+    s_speedUpTex.loadFromFile("assets/images/bolt.png");
+    s_slowDownTex.loadFromFile("assets/images/slow.png");
+    s_jumpBoostTex.loadFromFile("assets/images/jump.png");
+    s_freezeTex.loadFromFile("assets/images/ice.png");
+    s_bigKickTex.loadFromFile("assets/images/big.png");
+}
+
 Buff::Buff(Type t, sf::Vector2f p)
     : pos(p), type(t)
     , shape(radius())
 {
-    // 函数内静态变量：首次调用时加载贴图，之后复用
-    static sf::Texture FreezeTex;
-    static sf::Texture JumpBoostTex;
-    static sf::Texture BigKickTex;
-    static sf::Texture SlowDownTex;
-    static sf::Texture speedUpTex;
-    static bool texLoaded = false;
-    if (!texLoaded) {
-        speedUpTex.loadFromFile("assets/images/bolt.png");
-        FreezeTex.loadFromFile("assets/images/ice.png");
-        SlowDownTex.loadFromFile("assets/images/slow.png");
-        BigKickTex.loadFromFile("assets/images/big.png");
-        JumpBoostTex.loadFromFile("assets/images/jump.png");
-        texLoaded = true;
-    }
-
     shape.setOrigin({ radius(), radius() });
     shape.setOutlineThickness(5);
-    
 
     switch (type) {
     case SpeedUp:
         shape.setOutlineColor(sf::Color::Yellow);
-        shape.setTexture(&speedUpTex);
+        shape.setTexture(&s_speedUpTex);
         break;
-    case SlowDown:  
+    case SlowDown:
         shape.setOutlineColor(sf::Color::Red);
-        shape.setTexture(&SlowDownTex);
+        shape.setTexture(&s_slowDownTex);
         break;
-    case JumpBoost: 
+    case JumpBoost:
         shape.setOutlineColor(sf::Color::Blue);
-        shape.setTexture(&JumpBoostTex);
+        shape.setTexture(&s_jumpBoostTex);
         break;
-    case Freeze:    
+    case Freeze:
         shape.setOutlineColor(sf::Color::Blue);
-        shape.setTexture(&FreezeTex);
+        shape.setTexture(&s_freezeTex);
         break;
-    case BigKick:   
+    case BigKick:
         shape.setOutlineColor(sf::Color::Yellow);
-        shape.setTexture(&BigKickTex);
+        shape.setTexture(&s_bigKickTex);
         break;
     }
 }

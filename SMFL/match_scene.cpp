@@ -18,6 +18,8 @@ MatchScene::MatchScene(const sf::Font& font)
     //, buffer_("assets/Audio/kick.wav")
     //, kick_(buffer_)
 {
+    Buff::preload();  // 游戏启动时预加载所有 Buff 纹理
+
     bool bgOk = bgTexture.loadFromFile("assets/images/background.png");
     if (bgOk) {
         bgRect.setTexture(&bgTexture);

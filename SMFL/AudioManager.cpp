@@ -23,6 +23,14 @@ void AudioManager::init() {
     loadSound("kick", "assets/Audio/kick.wav");
     loadSound("hit", "assets/Audio/hit.wav");
     loadSound("goal", "assets/Audio/goal.wav");
+    for (auto& [id, sound] : sounds_) {
+        if (sound) {
+            sound->setVolume(0.0f);
+            sound->play();
+            sound->stop();
+            sound->setVolume(100.0f);
+        }
+    }
 }
 
 void AudioManager::play(const std::string& id) {
