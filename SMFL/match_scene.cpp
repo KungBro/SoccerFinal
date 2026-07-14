@@ -7,6 +7,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <cstdio>
+#include <cstdlib>
 #include <cmath>
 
 MatchScene::MatchScene(const sf::Font& font)
@@ -117,6 +118,8 @@ void MatchScene::restartMatch()
     remainingMs = 90000;
     matchFinished = false;
     paused = false;
+    buffs.clear();
+    buffSpawnTimer = 0.0f;
     resetPositions();
 }
 
@@ -256,6 +259,51 @@ void MatchScene::update(float)
     collision();
     checkGoalAndScore();
 
+    // ---- Buff 系统 ----
+    {
+        const float dt = 1.0f / 60.0f;
+
+        // 生成计时
+        buffSpawnTimer += dt;
+        if (buffSpawnTimer >= Constants::BuffSpawnInterval) {
+            buffSpawnTimer = 0.0f;
+            spawnBuff();
+        }
+
+        // 更新 Buff（过期移除）
+        updateBuffs(dt);
+
+        // 碰撞检测：球碰到 Buff 小球
+        for (auto& buff : buffs) {
+            if (!buff.active) continue;
+            if (Physics::checkBuffCollision(ball, buff)) {
+                buff.active = false;
+
+                // 决定目标：debuff 给对方，buff 给触球者
+                Player* target = nullptr;
+                if (buff.affectsOpponent()) {
+                    // 找对方球员
+                    if (ball.lastKicker == &player1)
+                        target = &player2;
+                    else if (ball.lastKicker == &player2)
+                        target = &player1;
+                    else
+                        target = &player2; // 默认给 player2（AI）
+                } else {
+                    // 增益给踢球者
+                    if (ball.lastKicker)
+                        target = ball.lastKicker;
+                    else
+                        target = &player1; // 默认
+                }
+
+                if (target) {
+                    buff.applyTo(*target);
+                }
+            }
+        }
+    }
+
     remainingMs -= 16;
     if (remainingMs <= 0) {
         remainingMs = 0;
@@ -324,9 +372,11 @@ void MatchScene::checkGoalAndScore()
     if (ball.pos.y < goalTop || ball.pos.y > Constants::GroundLevel) return;
 
     if (ball.pos.x <= Constants::GoalWidth) {
+        AudioManager::GetInstance()->play("goal");
         ++score2; resetPositions();
     }
     else if (ball.pos.x >= Constants::WindowWidth - Constants::GoalWidth) {
+        AudioManager::GetInstance()->play("goal");
         ++score1; resetPositions();
     }
 }
@@ -377,6 +427,12 @@ void MatchScene::draw(sf::RenderWindow& window)
     Actor* actors[] = { &player1, &player2, &ball };
     for (auto* actor : actors)
         actor->draw(window);
+
+    // 绘制 Buff 小球
+    for (auto& buff : buffs) {
+        if (buff.active)
+            buff.draw(window);
+    }
 
     if (Physics::isInKickZone(player1, ball))
     {
@@ -459,4 +515,39 @@ void MatchScene::draw(sf::RenderWindow& window)
     if (paused && !matchFinished) {
         pauseOverlay->draw(window);
     }
+}
+
+void MatchScene::spawnBuff()
+{
+    // 场上 Buff 数量限制
+    int activeCount = 0;
+    for (auto& b : buffs)
+        if (b.active) ++activeCount;
+    if (activeCount >= Constants::MaxBuffs)
+        return;
+
+    // 随机类型
+    int t = std::rand() % 5;
+    Buff::Type type = static_cast<Buff::Type>(t);
+
+    // 随机位置（避开球门区域）
+    const float margin = 100.0f;
+    const float x = margin + static_cast<float>(std::rand() %
+        static_cast<int>(Constants::WindowWidth - margin * 2));
+    const float y = 100.0f + static_cast<float>(std::rand() %
+        static_cast<int>(Constants::GroundLevel - 200.0f));
+
+    buffs.push_back(Buff(type, { x, y }));
+}
+
+void MatchScene::updateBuffs(float dt)
+{
+    for (auto& buff : buffs)
+        buff.update(dt);
+
+    // 移除已失效的 Buff
+    buffs.erase(
+        std::remove_if(buffs.begin(), buffs.end(),
+            [](const Buff& b) { return !b.active; }),
+        buffs.end());
 }

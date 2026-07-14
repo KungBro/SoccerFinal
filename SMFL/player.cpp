@@ -1,7 +1,7 @@
 #include "player.h"
 #include "physics.h"
-#include <SFML/Graphics/RectangleShape.hpp>   // <-- ��
-#include <SFML/Graphics/CircleShape.hpp>      // <-- ��
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 #include <algorithm>
 #include <cmath>
 
@@ -9,6 +9,52 @@ Player::Player()
     : acceleration(Constants::Gravity)
 {
     onGround = true;
+}
+
+void Player::applyEffect(Effect::Type type, float duration)
+{
+    for (auto& e : effects) {
+        if (e.type == type) {
+            e.remaining = std::max(e.remaining, duration);
+            return;
+        }
+    }
+    effects.push_back({ type, duration });
+}
+
+bool Player::hasEffect(Effect::Type type) const
+{
+    for (auto& e : effects) {
+        if (e.type == type && e.remaining > 0.0f)
+            return true;
+    }
+    return false;
+}
+
+void Player::updateEffects(float dt)
+{
+    for (auto& e : effects)
+        e.remaining -= dt;
+
+    effects.erase(
+        std::remove_if(effects.begin(), effects.end(),
+            [](const Effect& e) { return e.remaining <= 0.0f; }),
+        effects.end());
+
+    effectSpeedMult  = 1.0f;
+    effectJumpMult   = 1.0f;
+    effectKickMult   = 1.0f;
+    effectFrozen     = false;
+
+    for (auto& e : effects) {
+        switch (e.type) {
+        case Effect::SpeedUp:   effectSpeedMult *= 1.5f;  break;
+        case Effect::SlowDown:  effectSpeedMult *= 0.5f;  break;
+        case Effect::JumpBoost: effectJumpMult  *= 1.5f;  break;
+        case Effect::BigKick:   effectKickMult  *= 1.5f;  break;
+        case Effect::Freeze:    effectFrozen     = true;  break;
+        }
+    }
 }
 
 bool Player::loadHeadshot(const std::string& path)
@@ -92,16 +138,21 @@ void Player::jump()
 {
     if (!onGround) return;
     onGround = false;
-    velocity.y = -Constants::JumpSpeed;
+    velocity.y = -Constants::JumpSpeed * effectJumpMult;
 }
 
 void Player::update()
 {
+    updateEffects(1.0f / 60.0f);
+
+    const int effectiveInput = effectFrozen ? 0 : moveInput;
+
     const float ax = onGround ? Constants::PlayerGroundAccel : Constants::PlayerAirAccel;
-    velocity.x += moveInput * ax;
-    const float vmax = onGround ? Constants::PlayerMaxSpeedGround : Constants::PlayerMaxSpeedAir;
+    velocity.x += effectiveInput * ax;
+    const float vmax = (onGround ? Constants::PlayerMaxSpeedGround : Constants::PlayerMaxSpeedAir)
+                       * effectSpeedMult;
     velocity.x = std::clamp(velocity.x, -vmax, vmax);
-    if (moveInput == 0) {
+    if (effectiveInput == 0) {
         velocity.x *= (onGround ? Constants::PlayerGroundDrag : Constants::PlayerAirDrag);
         if (std::abs(velocity.x) < 0.08f) velocity.x = 0.0f;
     }

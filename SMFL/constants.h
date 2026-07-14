@@ -41,4 +41,10 @@ namespace Constants
     constexpr float KickMinAngleDeg = -5.0f;
     constexpr float KickMaxAngleDeg = 60.0f;
     constexpr float KickLiftBias = 0.35f;
+
+    // Buff 系统
+    constexpr float BuffSpawnInterval = 8.0f;   // 每 8 秒尝试生成
+    constexpr float BuffDuration = 6.0f;         // 效果持续 6 秒
+    constexpr float BuffLifetime = 15.0f;        // Buff 小球存活 15 秒
+    constexpr int   MaxBuffs = 3;                // 场上最多同时存在 3 个
 }

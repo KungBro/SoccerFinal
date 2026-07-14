@@ -1,6 +1,7 @@
 #include "physics.h"
 #include "ball.h"
 #include "player.h"
+#include "buff.h"
 #include "constants.h"
 #include "AudioManager.h"
 #include <algorithm>
@@ -182,12 +183,13 @@ bool Physics::checkCollideHead(Player* player, Ball* ball)
         ball->velocity += (j / mBall) * normal;
         player->velocity -= (j / mPlayer) * normal;
     }
+    ball->lastKicker = player;
     checkBallBoundary(ball);
 
-    static sf::Clock hitCooldownClock;  // 静态时钟，只会初始化一次
+    static sf::Clock hitCooldownClock;
     if (hitCooldownClock.getElapsedTime().asSeconds() >= 0.2f) {
         AudioManager::GetInstance()->play("hit");
-        hitCooldownClock.restart();  // 重置计时器
+        hitCooldownClock.restart();
     }
 
     return true;
@@ -280,7 +282,8 @@ bool Physics::checkCollideBody(Player* player, Ball* ball)
                 + (Constants::KickMaxStrength - Constants::KickMinStrength) * t;
             ball->velocity += kickStrength * kickDirection;
             ball->velocity.x += player->velocity.x * 0.35f;
-            
+            ball->lastKicker = player;
+
             player->iskick = false;
             static sf::Clock hitCooldownClock;  // 静态时钟，只会初始化一次
             if (hitCooldownClock.getElapsedTime().asSeconds() >= 0.2f) {
@@ -356,11 +359,23 @@ bool Physics::checkCollideBody(Player* player, Ball* ball)
     }
     checkBallBoundary(ball);
 
-    //static sf::Clock hitCooldownClock;  // 静态时钟，只会初始化一次
+    //static sf::Clock hitCooldownClock;
     //if (hitCooldownClock.getElapsedTime().asSeconds() >= 0.2f) {
     //    AudioManager::GetInstance()->play("hit");
-    //    hitCooldownClock.restart();  // 重置计时器
+    //    hitCooldownClock.restart();
     //}
 
     return true;
+}
+
+bool Physics::checkBuffCollision(const Ball& ball, const Buff& buff)
+{
+    const sf::Vector2f diff = ball.pos - buff.pos;
+    const float dist2 = dot(diff, diff);
+    const float combinedR = Constants::BallRadius + Buff::radius();
+    if (dist2 < combinedR * combinedR)
+    {
+        AudioManager::GetInstance()->play("select");
+    }
+    return dist2 < combinedR * combinedR;
 }

@@ -146,6 +146,7 @@
     <ClCompile Include="ai_player.cpp" />
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="ball.cpp" />
+    <ClCompile Include="buff.cpp" />
     <ClCompile Include="end_scene.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="AudioManager.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="ball.h" />
+    <ClInclude Include="buff.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="end_scene.h" />
     <ClInclude Include="game.h" />

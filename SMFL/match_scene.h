@@ -12,6 +12,7 @@
 #include "ball.h"
 #include "player.h"
 #include "ai_player.h"
+#include "buff.h"
 
 class PauseOverlay;
 
@@ -80,5 +81,11 @@ private:
     // 射门防连发：记录上一帧的按键状态
     bool p1KickWasPressed = false;
     bool p2KickWasPressed = false;
+
+    // Buff 系统
+    std::vector<Buff> buffs;
+    float buffSpawnTimer = 0.0f;
+    void spawnBuff();
+    void updateBuffs(float dt);
 
 };
