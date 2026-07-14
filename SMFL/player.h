@@ -27,6 +27,7 @@ public:
 
     void applyEffect(Effect::Type type, float duration);
     bool hasEffect(Effect::Type type) const;
+    const std::vector<Effect>& getEffects() const { return effects; }
 
     bool iskick = false;
     int playerface = 1;

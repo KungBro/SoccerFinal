@@ -60,7 +60,36 @@ MatchScene::MatchScene(const sf::Font& font)
         [this]() { togglePause(); },
         [this]() { if (onBackToMenu) onBackToMenu(); });
 
+    initStatusPanel();
     resetPositions();
+}
+
+void MatchScene::initStatusPanel()
+{
+    auto initSide = [&](std::unique_ptr<sf::Text>& label,
+                        std::vector<std::unique_ptr<sf::Text>>& texts,
+                        std::vector<sf::RectangleShape>& dots,
+                        const char* name, float x) {
+        label = std::make_unique<sf::Text>(font);
+        label->setString(name);
+        label->setCharacterSize(25);
+        label->setFillColor({ 220, 220, 220 });
+        label->setPosition({ x, 100.0f });
+
+        texts.resize(kMaxStatusLines);
+        dots.resize(kMaxStatusLines);
+        for (int i = 0; i < kMaxStatusLines; ++i) {
+            texts[i] = std::make_unique<sf::Text>(font);
+            texts[i]->setCharacterSize(20);
+            texts[i]->setPosition({ x + 15.0f, 120.0f + (i + 1) * 22.0f });
+
+            dots[i].setSize({ 10.0f, 10.0f });
+            dots[i].setPosition({ x, 120.0f + (i + 1) * 22.0f + 3.0f });
+        }
+    };
+
+    initSide(statusP1Label, statusP1Texts, statusP1Dots, "P1", 10.0f);
+    initSide(statusP2Label, statusP2Texts, statusP2Dots, "P2", 1400.0f);
 }
 
 MatchScene::~MatchScene()
@@ -492,6 +521,36 @@ void MatchScene::draw(sf::RenderWindow& window)
         aiLabel.setPosition({ 197 + rw * 0.5f, sy + rh + 12 });
         window.draw(aiLabel);
     }
+
+    // Status panel
+    auto drawSide = [&](const Player& player, std::unique_ptr<sf::Text>& label,
+                        std::vector<std::unique_ptr<sf::Text>>& texts,
+                        std::vector<sf::RectangleShape>& dots) {
+        window.draw(*label);
+        const auto& effects = player.getEffects();
+        if (effects.empty()) {
+            texts[0]->setString("- none -");
+            texts[0]->setFillColor({ 120, 120, 120 });
+            dots[0].setFillColor(sf::Color::Transparent);
+            window.draw(*texts[0]);
+            return;
+        }
+        static const char* kNames[] = {"Speed+","Slow-","Jump+","Frozen","PowerKick"};
+        for (int i = 0; i < kMaxStatusLines; ++i) {
+            if (i < (int)effects.size()) {
+                const auto& e = effects[i];
+                char buf[32];
+                std::snprintf(buf, sizeof(buf), "%s %.1fs", kNames[e.type], e.remaining);
+                texts[i]->setString(buf);
+                texts[i]->setFillColor(statusColors[e.type]);
+                dots[i].setFillColor(statusColors[e.type]);
+                window.draw(dots[i]);
+                window.draw(*texts[i]);
+            }
+        }
+    };
+    drawSide(player1, statusP1Label, statusP1Texts, statusP1Dots);
+    drawSide(player2, statusP2Label, statusP2Texts, statusP2Dots);
 
     int sec = (int)remainingMs / 1000;
     sf::Text timer(font); char tbuf[16];

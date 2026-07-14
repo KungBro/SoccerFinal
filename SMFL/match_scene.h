@@ -8,6 +8,7 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Audio.hpp>
 #include <functional>
+#include <memory>
 #include <vector>
 #include "ball.h"
 #include "player.h"
@@ -88,4 +89,20 @@ private:
     void spawnBuff();
     void updateBuffs(float dt);
 
+    // 状态栏（预创建对象，每帧只更新文本）
+    static constexpr int kMaxStatusLines = 5;
+    void initStatusPanel();
+    std::unique_ptr<sf::Text> statusP1Label;
+    std::unique_ptr<sf::Text> statusP2Label;
+    std::vector<std::unique_ptr<sf::Text>> statusP1Texts;
+    std::vector<std::unique_ptr<sf::Text>> statusP2Texts;
+    std::vector<sf::RectangleShape> statusP1Dots;
+    std::vector<sf::RectangleShape> statusP2Dots;
+    const sf::Color statusColors[5] = {
+        { 50,  220, 50  },
+        { 220, 50,  50  },
+        { 50,  150, 255 },
+        { 150, 200, 255 },
+        { 255, 180, 30  },
+    };
 };
