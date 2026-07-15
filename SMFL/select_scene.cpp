@@ -13,7 +13,7 @@ SelectScene::SelectScene(const sf::Font& font)
 
 void SelectScene::loadAssets()
 {
-    (void)bgTexture.loadFromFile("assets/images/select_scene.png");
+    (void)bgTexture.loadFromFile("assets/images/select_scene.png");         //统一加载选人界面资源
     const char* heads[] = { "player_1","player_2","player_3",
                            "player_4","player_6","player_5" };
     const char* bodys[] = { "CHE","ATM","ARS","MCI","PSG","FCB" };
@@ -28,7 +28,7 @@ void SelectScene::loadAssets()
 
 void SelectScene::handleEvent(const sf::Event& event)
 {
-    if (const auto* key = event.getIf<sf::Event::KeyPressed>()) {
+    if (const auto* key = event.getIf<sf::Event::KeyPressed>()) {           //按键控制选择
         switch (key->code) {
         case sf::Keyboard::Key::A:
             player1Index = (player1Index + 5) % 6; 
@@ -61,7 +61,7 @@ void SelectScene::handleEvent(const sf::Event& event)
 
 void SelectScene::update(float) {}
 
-void SelectScene::draw(sf::RenderWindow& window)
+void SelectScene::draw(sf::RenderWindow& window)                         //绘制选人界面
 {
     sf::Sprite bgSprite(bgTexture);
     auto bgSize = bgSprite.getLocalBounds().size;
@@ -90,7 +90,7 @@ void SelectScene::draw(sf::RenderWindow& window)
                                 "player_4","player_6","player_5" };
     const char* bodyPaths[] = { "CHE","ATM","ARS","MCI","PSG","FCB" };
 
-    for (int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {               //六名球员的模型展示
         const float cx = spacing + slotWidth * (i + 0.5f);
         Player preview;
         preview.pos = { cx, headCenterY };

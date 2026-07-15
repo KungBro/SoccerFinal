@@ -9,11 +9,11 @@
 #include <functional>
 #include <string>
 
-struct Button
+struct Button                               //封装按钮
 {
     sf::RectangleShape shape;
     sf::Text text;
-    std::function<void()> onClick;
+    std::function<void()> onClick;          //接收点击操作函数
     bool hovered = false;
 
     Button(const sf::Font& font, const std::string& label,

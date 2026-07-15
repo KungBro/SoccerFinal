@@ -10,9 +10,9 @@ Button::Button(const sf::Font& font, const std::string& label,
     std::function<void()> callback)
     : shape(size)
     , text(font)
-    , onClick(std::move(callback))
+    , onClick(std::move(callback))      //std::move开启移动语义，避免昂贵拷贝，本质还是把callback赋给onclick
 {
-    shape.setOrigin({ size.x * 0.5f, size.y * 0.5f });
+    shape.setOrigin({ size.x * 0.5f, size.y * 0.5f });          //初始化按钮外观
     shape.setPosition(position);
     text.setString(label);
     text.setCharacterSize(24);
@@ -31,9 +31,9 @@ void Button::setColor(const sf::Color& n, const sf::Color& h, const sf::Color& p
 
 void Button::handleMouseMove(const sf::Vector2i& mp)
 {
-    hovered = shape.getGlobalBounds().contains(
+    hovered = shape.getGlobalBounds().contains(             //判断鼠标是否悬停在按钮上
         { (float)mp.x, (float)mp.y });
-    if (pressed && !hovered) pressed = false;
+    if (pressed && !hovered) pressed = false;               //防止按钮颜色出错
     if (!pressed) shape.setFillColor(hovered ? colorHover : colorNormal);
 }
 
@@ -41,15 +41,14 @@ void Button::handleMouseClick(const sf::Vector2i& mp)
 {
     if (shape.getGlobalBounds().contains({ (float)mp.x, (float)mp.y })) {
         pressed = true;
-        AudioManager::GetInstance()->play("click");
-        //sound_.play();
-        if (AudioManager::GetInstance()->isMusicPaused)
+        AudioManager::GetInstance()->play("click");         //播放鼠标点击音效
+        if (AudioManager::GetInstance()->isMusicPaused)     //暂停页面中点击按钮可以继续播放音乐
         {
             AudioManager::GetInstance()->playMusic();
             AudioManager::GetInstance()->isMusicPaused = false;
         }
         shape.setFillColor(colorPress);
-        if (onClick) onClick();
+        if (onClick) onClick();                             //执行点击操作
         pressed = false;
     }
 }
@@ -61,14 +60,14 @@ void Button::draw(sf::RenderWindow& window) {
 // ---- MenuScene ----
 MenuScene::MenuScene(const sf::Font& font)
     : singlePlayerButton(font, "Single Player", { 250, 80 }, { 800, 360 },
-        [this]() { if (onSinglePlayer) onSinglePlayer(); })
+        [this]() { if (onSinglePlayer) onSinglePlayer();    /*如果onSinglePlayer非空，就调用*/  })
     , twoPlayerButton(font, "Two Player", { 250, 80 }, { 800, 470 },
         [this]() { if (onTwoPlayer) onTwoPlayer(); })
     , exitButton(font, "Quit", { 250, 80 }, { 800, 580 },
         [this]() { if (onQuit) onQuit(); })
     , titleText(font)
 {
-    titleText.setString("Bouncing World Cup");
+    titleText.setString("Bouncing World Cup");              //初始化界面 
     titleText.setCharacterSize(48);
     titleText.setFillColor(sf::Color::White);
     auto tb = titleText.getLocalBounds();
@@ -83,7 +82,7 @@ MenuScene::MenuScene(const sf::Font& font)
 
 void MenuScene::handleEvent(const sf::Event& event)
 {
-    if (const auto* mm = event.getIf<sf::Event::MouseMoved>()) {
+    if (const auto* mm = event.getIf<sf::Event::MouseMoved>()) {            //把鼠标反馈交给button处理
         singlePlayerButton.handleMouseMove(mm->position);
         twoPlayerButton.handleMouseMove(mm->position);
         exitButton.handleMouseMove(mm->position);

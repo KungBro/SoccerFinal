@@ -10,7 +10,7 @@ PauseOverlay::PauseOverlay(const sf::Font& font,
     , resumeButton(font, "Continue", { 220, 56 }, { 800, 420 }, std::move(onResume))
     , quitToMenuButton(font, "Quit to Menu", { 220, 56 }, { 800, 510 }, std::move(onQuit))
 {
-    overlay.setSize({ Constants::WindowWidth, Constants::WindowHeight });
+    overlay.setSize({ Constants::WindowWidth, Constants::WindowHeight });       //设置暂停页面外形参数
     overlay.setFillColor({ 0, 0, 0, 160 });
 
     pausedText.setString("PAUSED");
@@ -27,7 +27,7 @@ PauseOverlay::PauseOverlay(const sf::Font& font,
 
 void PauseOverlay::handleEvent(const sf::Event& event)
 {
-    if (const auto* mm = event.getIf<sf::Event::MouseMoved>()) {
+    if (const auto* mm = event.getIf<sf::Event::MouseMoved>()) {                //由Button处理反馈事件
         resumeButton.handleMouseMove(mm->position);
         quitToMenuButton.handleMouseMove(mm->position);
     }

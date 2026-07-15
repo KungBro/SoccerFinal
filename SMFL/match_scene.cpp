@@ -15,14 +15,10 @@ MatchScene::MatchScene(const sf::Font& font)
     , bgRect({ Constants::WindowWidth, Constants::WindowHeight })
     , arrow_1({ Constants::ArrowWidth, Constants::ArrowHeight })
     , arrow_2({ Constants::ArrowWidth, Constants::ArrowHeight })
-    //, buffer_("assets/Audio/kick.wav")
-    //, kick_(buffer_)
 {
     Buff::preload();  // 游戏启动时预加载所有 Buff 纹理
 
-    
-
-    bool bgOk = bgTexture.loadFromFile("assets/images/background.png");
+    bool bgOk = bgTexture.loadFromFile("assets/images/background.png");         //其他资源的预加载
     if (bgOk) {
         bgRect.setTexture(&bgTexture);
         bgRect.setTextureRect(sf::IntRect(
@@ -45,7 +41,6 @@ MatchScene::MatchScene(const sf::Font& font)
         arrow_2.setScale({ 0.5f, 0.5f });
     }
 
-    // Preload head/body textures
     const char* heads[] = { "player_1","player_2","player_3",
                            "player_4","player_6","player_5" };
     const char* bodys[] = { "CHE","ATM","ARS","MCI","PSG","FCB" };
@@ -57,13 +52,13 @@ MatchScene::MatchScene(const sf::Font& font)
             std::string("assets/images/") + bodys[i] + ".png");
     }
 
-    // Create pause overlay
+    //创建暂停覆盖界面以备触发
     pauseOverlay = new PauseOverlay(font,
-        [this]() { togglePause(); },
+        [this]() { togglePause(); },                        //在这里载入两个按钮的功能
         [this]() { if (onBackToMenu) onBackToMenu(); });
 
-    initStatusPanel();
-    resetPositions();
+    initStatusPanel();      //初始化状态栏
+    resetPositions();       //初始化球与球员位置
 }
 
 void MatchScene::initStatusPanel()
@@ -71,7 +66,8 @@ void MatchScene::initStatusPanel()
     auto initSide = [&](std::unique_ptr<sf::Text>& label,
                         std::vector<std::unique_ptr<sf::Text>>& texts,
                         std::vector<sf::RectangleShape>& dots,
-                        const char* name, float x) {
+                        const char* name, float x) 
+    {
         label = std::make_unique<sf::Text>(font);
         label->setString(name);
         label->setCharacterSize(25);
@@ -99,13 +95,13 @@ MatchScene::~MatchScene()
     delete pauseOverlay;
 }
 
-void MatchScene::togglePause()
+void MatchScene::togglePause()      //变更暂停状态，既能实现暂停也能实现继续
 {
     if (matchFinished) return;
     paused = !paused;
 }
 
-void MatchScene::setPlayers(int p1, int p2)
+void MatchScene::setPlayers(int p1, int p2)     //球员初始化
 {
     player1Type = p1; player2Type = p2;
     player1.setAttributes(getPlayerAttributes(p1));
@@ -129,7 +125,7 @@ void MatchScene::setPlayers(int p1, int p2)
     }
 }
 
-void MatchScene::resetPositions()
+void MatchScene::resetPositions()       //位置初始化&重置
 {
     player1.pos = { 300, Constants::GroundLevel - Constants::PlayerHeight };
     player2.pos = { 1300, Constants::GroundLevel - Constants::PlayerHeight };
@@ -147,7 +143,7 @@ void MatchScene::resetPositions()
     aiPlayer.reset();
 }
 
-void MatchScene::restartMatch()
+void MatchScene::restartMatch()     //重新开始比赛
 {
     score1 = score2 = 0;
     remainingMs = 90000;
@@ -161,7 +157,7 @@ void MatchScene::restartMatch()
 
 void MatchScene::handleEvent(const sf::Event& event)
 {
-    // Pause toggle (works even when paused or finished)
+    //按Esc继续游戏或暂停游戏
     if (const auto* key = event.getIf<sf::Event::KeyPressed>()) {
         if (key->code == sf::Keyboard::Key::Escape) {
             togglePause();
@@ -179,7 +175,7 @@ void MatchScene::handleEvent(const sf::Event& event)
         }
     }
 
-    // Delegate to pause overlay when paused
+    //暂停时由pauseoverlay处理
     if (paused && !matchFinished) {
         pauseOverlay->handleEvent(event);
         return;
@@ -191,6 +187,7 @@ void MatchScene::handleEvent(const sf::Event& event)
         return;
     }
 
+    // 游戏内球员输入逻辑部分：
     // Player 1 输入
     if (const auto* key = event.getIf<sf::Event::KeyPressed>()) 
     {
