@@ -15,12 +15,10 @@ void KickFlash::update(float dt)
     elapsed += dt;
     const float t = std::clamp(elapsed / DURATION, 0.0f, 1.0f);
 
-    // Linear interpolation for radius
     const float r = START_RADIUS + (END_RADIUS - START_RADIUS) * t;
     shape.setRadius(r);
     shape.setOrigin({ r, r });
 
-    // Quadratic ease-out for alpha: stays bright briefly, fades fast at end
     const auto alpha = static_cast<uint8_t>(START_ALPHA * (1.0f - t * t));
     const auto& c = shape.getFillColor();
     shape.setFillColor(sf::Color(c.r, c.g, c.b, alpha));

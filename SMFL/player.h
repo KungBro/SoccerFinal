@@ -7,14 +7,12 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <vector>
 
-// Per-player-type base attributes (multipliers over base Constants)
 struct PlayerAttributes {
     float speedMult = 1.0f;
     float jumpMult  = 1.0f;
     float kickMult  = 1.0f;
 };
 
-// Lookup table for the 6 player types
 const PlayerAttributes& getPlayerAttributes(int type);
 
 class Player : public Actor

@@ -3,7 +3,6 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
-// File-scope static textures: shared by all Buff instances, loaded once in preload()
 static sf::Texture s_speedUpTex;
 static sf::Texture s_slowDownTex;
 static sf::Texture s_jumpBoostTex;

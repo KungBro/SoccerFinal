@@ -64,7 +64,7 @@ private:
     float remainingMs = 90000.0f;
     bool matchFinished = false;
 
-    // Single player / pause
+    
     bool singlePlayer = false;
     bool paused = false;
     AIPlayer aiPlayer;

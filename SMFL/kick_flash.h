@@ -5,9 +5,6 @@
 #include <SFML/System/Vector2.hpp>
 #include <cstdint>
 
-// Simple expanding-flash effect that appears at the kick point.
-// Grows from a small bright circle to a larger transparent one,
-// then auto-cleans up when the animation finishes.
 class KickFlash
 {
 public:

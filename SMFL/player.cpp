@@ -83,17 +83,13 @@ bool Player::loadBodyTexture(const std::string& path)
 
 void Player::draw(sf::RenderWindow& window)
 {
-    // ---- ���壨ͷ�����·���----
-    // ԭ�� Qt��bodyRect(pos.x-20, pos.y+50, 40, 50)
     if (hasBody) {
         sf::Sprite bodySprite(bodyTex);
         auto sz = bodyTex.getSize();
-        // ���ţ����� 40���߶� 50
         bodySprite.setScale({
             (float)Constants::PlayerBodyWidth / (float)sz.x,
             (float)Constants::PlayerBodyHeight / (float)sz.y
             });
-        // ԭ�㣺ˮƽ���У���������
         bodySprite.setOrigin({ (float)sz.x * 0.5f, 0.0f });
         bodySprite.setPosition(
             pos + sf::Vector2f(0.0f, (float)Constants::PlayerRadius));
@@ -110,21 +106,16 @@ void Player::draw(sf::RenderWindow& window)
         window.draw(fallback);
     }
 
-    // ---- ͷ����Բ���� pos + ΢С��ƫ��----
-    // ԭ�� Qt��Բ�� = pos + (0, PlayerRadius*0.25)���뾶 = PlayerRadius*1.25
     const float headSize = Constants::PlayerRadius * 2.0f * 1.25f;
     const float headOffsetY = Constants::PlayerRadius * 0.25f;
 
     if (hasHead) {
         sf::Sprite headSprite(headTex);
         auto sz = headTex.getSize();
-        // ��������ͷ������
         headSprite.setScale({ headSize / (float)sz.x, headSize / (float)sz.y });
-        // ԭ�㣺ͼƬ����
         headSprite.setOrigin({ (float)sz.x * 0.5f, (float)sz.y * 0.5f });
         headSprite.setPosition(
             pos + sf::Vector2f(0.0f, headOffsetY));
-        // ����ת
         headSprite.setScale({
             (playerface == 1 ? -1.0f : 1.0f) * headSize / (float)sz.x,
             headSize / (float)sz.y

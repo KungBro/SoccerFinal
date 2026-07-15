@@ -360,11 +360,6 @@ bool Physics::checkCollideBody(Player* player, Ball* ball)
     }
     checkBallBoundary(ball);
 
-    //static sf::Clock hitCooldownClock;
-    //if (hitCooldownClock.getElapsedTime().asSeconds() >= 0.2f) {
-    //    AudioManager::GetInstance()->play("hit");
-    //    hitCooldownClock.restart();
-    //}
 
     return true;
 }

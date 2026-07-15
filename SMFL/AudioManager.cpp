@@ -58,7 +58,7 @@ void AudioManager::init() {
 void AudioManager::play(const std::string& id) {
     auto it = sounds_.find(id);
     if (it != sounds_.end() && it->second) {
-        it->second->play();   // ⬅️ 用 -> 调用
+        it->second->play();   
     }
     else {
         std::cerr << "未找到音效: " << id << std::endl;

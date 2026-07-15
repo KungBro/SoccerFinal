@@ -7,7 +7,7 @@
 #include <SFML/Graphics/Text.hpp>
 #include <functional>
 #include <string>
-#include "menu_scene.h"   // for Button
+#include "menu_scene.h"   
 
 class EndScene : public Scene
 {
