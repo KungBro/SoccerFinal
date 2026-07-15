@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cmath>
 
-// Per-player-type base attribute table (indexed by player type 0-5)
+// 球员属性设置
 static const PlayerAttributes kPlayerAttributes[6] = {
     // CHE         ATM         ARS         MCI         PSG         FCB
     {1.0f,1.0f,1.2f}, {1.2f,1.0f,1.4f}, {1.0f,1.2f,1.4f},

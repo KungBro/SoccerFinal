@@ -58,7 +58,7 @@ void Game::processEvents()
 {
     while (auto event = window.pollEvent()) {                               //最外层只负责窗口关闭响应
         if (event->is<sf::Event::Closed>()) { window.close(); return; }
-        currentScene->handleEvent(*event);
+        currentScene->handleEvent(*event);                                  //具体操作交给内层处理
     }
 }
 
