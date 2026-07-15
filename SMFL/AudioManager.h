@@ -54,5 +54,6 @@ public:
     void setVolume(float volume);
     void pauseMusic();
     void playMusic();
+    void restartMusic();
     bool isMusicPaused = false;
 };

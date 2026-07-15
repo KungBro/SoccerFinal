@@ -69,7 +69,14 @@ void Game::render()
     window.display();
 }
 
-void Game::goToMenu() { currentScene = menuScene; }
+void Game::goToMenu() 
+{ 
+    currentScene = menuScene;
+    if (AudioManager::GetInstance()->isMusicPaused)
+    {
+        AudioManager::GetInstance()->restartMusic();
+    }
+}
 
 void Game::goToSelect(bool singlePlayer)
 {

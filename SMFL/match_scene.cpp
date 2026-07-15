@@ -99,6 +99,16 @@ void MatchScene::togglePause()      //变更暂停状态，既能实现暂停也
 {
     if (matchFinished) return;
     paused = !paused;
+    if (!paused)
+    {
+        AudioManager::GetInstance()->playMusic();
+        AudioManager::GetInstance()->isMusicPaused = false;
+    }
+    else
+    {
+        AudioManager::GetInstance()->pauseMusic();
+        AudioManager::GetInstance()->isMusicPaused = true;
+    }
 }
 
 void MatchScene::setPlayers(int p1, int p2)     //球员初始化
@@ -161,16 +171,6 @@ void MatchScene::handleEvent(const sf::Event& event)
     if (const auto* key = event.getIf<sf::Event::KeyPressed>()) {
         if (key->code == sf::Keyboard::Key::Escape) {
             togglePause();
-            if (AudioManager::GetInstance()->isMusicPaused)
-            {
-                AudioManager::GetInstance()->playMusic();
-                AudioManager::GetInstance()->isMusicPaused = false;
-            }
-            else 
-            {
-                AudioManager::GetInstance()->pauseMusic();
-                AudioManager::GetInstance()->isMusicPaused = true;
-            }
             return;
         }
     }
@@ -242,28 +242,25 @@ void MatchScene::update(float)
 {
     if (matchFinished || paused) return;
 
-    // ===== 玩家1：移动（持续响应，无卡顿） =====
+    // 用状态更新方式处理移动，避免输入卡顿
     int p1Move = 0;
     if (p1LeftPressed)  p1Move -= 1;
     if (p1RightPressed) p1Move += 1;
     player1.move(p1Move);
-
-    // 玩家1：跳跃
+    
     if (p1JumpPressed) {
         player1.jump();
-        p1JumpPressed = false; // 跳一次就消耗
+        p1JumpPressed = false;
     }
-
-    // 玩家1：射门（上升沿触发，只在范围内生效）
+    //射门（上升沿触发，只在范围内生效）
     if (p1KickPressed && !p1KickWasPressed) {
-        if (Physics::isInKickZone(player1, ball)) {  // 你需要自己实现这个判断
+        if (Physics::isInKickZone(player1, ball)) {
             player1.iskick = true;
         }
-        // 不在范围内就忽略，不留痕迹
     }
-    p1KickWasPressed = p1KickPressed;
-
-    // ===== 玩家2：同理 =====
+    p1KickWasPressed = p1KickPressed; //防止射门卡键
+    
+    // Player 2
     if (!singlePlayer) 
     {
         int p2Move = 0;
@@ -285,7 +282,7 @@ void MatchScene::update(float)
     }
 
 
-    // AI controls player 2 before physics so inputs take effect this frame
+    // AI操作在物理碰撞更新前介入
     if (singlePlayer) {
         aiPlayer.update(player2, ball);
     }
@@ -294,13 +291,14 @@ void MatchScene::update(float)
     for (auto* actor : actors)
         actor->update();
 
-    setArrow(player1, arrow_1);
+    setArrow(player1, arrow_1);     //更新射门指示器状态
     setArrow(player2, arrow_2);
 
-    Physics::resolvePlayerStandingOnBall(player1, ball);
+    // ---- 物理碰撞 ----
+    Physics::resolvePlayerStandingOnBall(player1, ball);    //正确处理球员站在球上的碰撞
     Physics::resolvePlayerStandingOnBall(player2, ball);
-    collision();
-    checkGoalAndScore();
+    collision();                                            //总碰撞函数集合
+    checkGoalAndScore();                                    //进球碰撞检测
 
     // ---- Buff 系统 ----
     {
@@ -347,7 +345,7 @@ void MatchScene::update(float)
         }
     }
 
-    // ---- Kick flash effects ----
+    // ---- 击球特效 ----
     {
         const float dt = 1.0f / 60.0f;
         for (auto& kf : kickFlashes)
@@ -371,14 +369,11 @@ void MatchScene::setArrow(const Player& player, sf::RectangleShape& arrow)
     arPos = ball.getPos();
     float directionRad = 0.f;
     sf::Vector2f KickDirection;
-
-    // 获取形状的本地边界（SFML 3.x 语法）
     sf::FloatRect bounds = arrow.getLocalBounds();
-
-    // 将原点设为宽度和高度的一半（即中心点）
     arrow.setOrigin({ 0, bounds.size.y / 2.f });
-
-    const sf::Vector2f kickCenter = player.pos
+    
+    //复现得到射门角度和力量的代码
+    const sf::Vector2f kickCenter = player.pos                  
         + sf::Vector2f(0.0f, (float)Constants::PlayerHeight);
     const sf::Vector2f toBall = ball.pos - kickCenter;
     const float forward = toBall.x * player.playerface;
@@ -399,6 +394,7 @@ void MatchScene::setArrow(const Player& player, sf::RectangleShape& arrow)
     float kickStrength =
         Constants::KickMinStrength
         + (Constants::KickMaxStrength - Constants::KickMinStrength) * t;
+    
     if (kickDirection.x != 0.f || kickDirection.y != 0.f) {
         directionRad = std::atan2(kickDirection.y, kickDirection.x);
     }
@@ -410,7 +406,7 @@ void MatchScene::setArrow(const Player& player, sf::RectangleShape& arrow)
     arrow.setScale({ kickStrength / 80, kickStrength / 80 });
 }
 
-void MatchScene::collision()
+void MatchScene::collision()        //碰撞函数封装
 {
     Physics::checkPlayerCollision(&player1, &player2);
     for (auto* p : { &player1, &player2 }) {
@@ -426,7 +422,7 @@ void MatchScene::collision()
     Physics::checkGoalCrossbarCollision(&ball);
 }
 
-void MatchScene::checkGoalAndScore()
+void MatchScene::checkGoalAndScore()        //进球检测
 {
     const float goalTop = Constants::GroundLevel - Constants::GoalHeight;
     if (ball.pos.y < goalTop || ball.pos.y > Constants::GroundLevel) return;
@@ -542,7 +538,7 @@ void MatchScene::draw(sf::RenderWindow& window)
     drawScore(79, a1, score1);
     drawScore(197, a2, score2);
 
-    // AI indicator
+    // AI 指示器
     if (singlePlayer) {
         sf::Text aiLabel(font);
         aiLabel.setString("(AI)");
@@ -555,7 +551,7 @@ void MatchScene::draw(sf::RenderWindow& window)
         window.draw(aiLabel);
     }
 
-    // Status panel
+    // 状态栏
     auto drawSide = [&](const Player& player, std::unique_ptr<sf::Text>& label,
                         std::vector<std::unique_ptr<sf::Text>>& texts,
                         std::vector<sf::RectangleShape>& dots) {
@@ -605,7 +601,7 @@ void MatchScene::draw(sf::RenderWindow& window)
         go.setPosition({ 800, 450 }); window.draw(go);
     }
 
-    // Pause overlay (drawn last, on top of everything)
+    // 暂停界面
     if (paused && !matchFinished) {
         pauseOverlay->draw(window);
     }

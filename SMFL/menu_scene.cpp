@@ -42,11 +42,6 @@ void Button::handleMouseClick(const sf::Vector2i& mp)
     if (shape.getGlobalBounds().contains({ (float)mp.x, (float)mp.y })) {
         pressed = true;
         AudioManager::GetInstance()->play("click");         //播放鼠标点击音效
-        if (AudioManager::GetInstance()->isMusicPaused)     //暂停页面中点击按钮可以继续播放音乐
-        {
-            AudioManager::GetInstance()->playMusic();
-            AudioManager::GetInstance()->isMusicPaused = false;
-        }
         shape.setFillColor(colorPress);
         if (onClick) onClick();                             //执行点击操作
         pressed = false;

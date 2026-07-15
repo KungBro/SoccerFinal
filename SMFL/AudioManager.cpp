@@ -28,6 +28,12 @@ void AudioManager::playMusic()
     music_.play();
 }
 
+void AudioManager::restartMusic()
+{
+    music_.stop();
+    music_.play();
+}
+
 AudioManager* AudioManager::GetInstance() {
     static AudioManager instance;
     return &instance;
