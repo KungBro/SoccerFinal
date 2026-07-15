@@ -12,6 +12,7 @@
 
 MatchScene::MatchScene(const sf::Font& font)
     : font(font)
+    , fpsText(font)
     , bgRect({ Constants::WindowWidth, Constants::WindowHeight })
     , arrow_1({ Constants::ArrowWidth, Constants::ArrowHeight })
     , arrow_2({ Constants::ArrowWidth, Constants::ArrowHeight })
@@ -58,6 +59,12 @@ MatchScene::MatchScene(const sf::Font& font)
         [this]() { if (onBackToMenu) onBackToMenu(); });
 
     initStatusPanel();      //初始化状态栏
+
+    // 初始化 FPS 显示
+    fpsText.setCharacterSize(18);
+    fpsText.setFillColor({ 180, 180, 180 });
+    fpsText.setPosition({ Constants::WindowWidth - 100.0f, 10.0f });
+
     resetPositions();       //初始化球与球员位置
 }
 
@@ -241,6 +248,20 @@ void MatchScene::handleEvent(const sf::Event& event)
 void MatchScene::update(float)
 {
     if (matchFinished || paused) return;
+
+    // FPS 计算（每 0.5 秒更新一次显示）
+    {
+        frameCount++;
+        float elapsed = fpsClock.getElapsedTime().asSeconds();
+        if (elapsed >= 0.5f) {
+            int fps = static_cast<int>(frameCount / elapsed);
+            char buf[16];
+            std::snprintf(buf, sizeof(buf), "FPS: %d", fps);
+            fpsText.setString(buf);
+            frameCount = 0;
+            fpsClock.restart();
+        }
+    }
 
     // 用状态更新方式处理移动，避免输入卡顿
     int p1Move = 0;
@@ -590,6 +611,8 @@ void MatchScene::draw(sf::RenderWindow& window)
     timer.setOrigin({ ttb.position.x + ttb.size.x * 0.5f,
                      ttb.position.y + ttb.size.y * 0.5f });
     timer.setPosition({ 800, 40 }); window.draw(timer);
+
+    window.draw(fpsText);
 
     if (matchFinished) {
         sf::Text go(font);

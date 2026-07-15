@@ -85,6 +85,11 @@ private:
     bool p1KickWasPressed = false;
     bool p2KickWasPressed = false;
 
+    // FPS 显示
+    sf::Clock fpsClock;
+    int frameCount = 0;
+    sf::Text fpsText;
+
     // Buff 系统
     std::vector<Buff> buffs;
 
